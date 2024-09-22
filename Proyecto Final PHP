@@ -1,0 +1,614 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 22-09-2024 a las 01:47:02
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Base de datos: `biblioteca_prestadora`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `cliente`
+--
+
+CREATE TABLE `cliente` (
+  `id_cliente` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `telefono` char(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `cliente`
+--
+
+INSERT INTO `cliente` (`id_cliente`, `nombre`, `telefono`) VALUES
+(2, 'Fidel', '8293453678'),
+(3, 'Enepio', '8495021568'),
+(4, 'Francis', '8497685940');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `devolucion`
+--
+
+CREATE TABLE `devolucion` (
+  `id_prestamo` int(11) NOT NULL,
+  `fecha_devolucion_real` date NOT NULL,
+  `monto_mora_total` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `libro`
+--
+
+CREATE TABLE `libro` (
+  `id_libro` int(11) NOT NULL,
+  `titulo` varchar(100) NOT NULL,
+  `autor` varchar(100) NOT NULL,
+  `ISBN` char(13) NOT NULL,
+  `numero_edicion` int(11) NOT NULL,
+  `costodiario_mora` decimal(10,2) NOT NULL,
+  `disponible` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `libro`
+--
+
+INSERT INTO `libro` (`id_libro`, `titulo`, `autor`, `ISBN`, `numero_edicion`, `costodiario_mora`, `disponible`) VALUES
+(2, 'Don Quijote de la Mancha', 'Miguel de Cervantes', '9780393090185', 3, 200.00, 1),
+(3, 'En tiempo de las Mariposas', 'Julia Alvarez', '9789505636563', 2, 100.00, 1),
+(4, 'El Principito', 'Antoine Marie Jean', '9780393090689', 1, 75.00, 1),
+(5, 'La Mujer', 'Juan Bosch', '9789505616904', 1, 150.00, 1),
+(6, 'La Odisea', 'Homero', '9693393090689', 1, 200.00, 1),
+(7, 'La Iliada', 'Homero', '9849157600689', 1, 100.00, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `prestamo`
+--
+
+CREATE TABLE `prestamo` (
+  `id_prestamo` int(11) NOT NULL,
+  `id_libro` int(11) NOT NULL,
+  `id_cliente` int(11) NOT NULL,
+  `fecha_prestamo` date NOT NULL,
+  `fecha_devolucion` date NOT NULL,
+  `devuelto` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `cliente`
+--
+ALTER TABLE `cliente`
+  ADD PRIMARY KEY (`id_cliente`);
+
+--
+-- Indices de la tabla `devolucion`
+--
+ALTER TABLE `devolucion`
+  ADD PRIMARY KEY (`id_prestamo`) USING BTREE;
+
+--
+-- Indices de la tabla `libro`
+--
+ALTER TABLE `libro`
+  ADD PRIMARY KEY (`id_libro`);
+
+--
+-- Indices de la tabla `prestamo`
+--
+ALTER TABLE `prestamo`
+  ADD PRIMARY KEY (`id_prestamo`),
+  ADD KEY `id_cliente` (`id_cliente`),
+  ADD KEY `id_libro` (`id_libro`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `cliente`
+--
+ALTER TABLE `cliente`
+  MODIFY `id_cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `libro`
+--
+ALTER TABLE `libro`
+  MODIFY `id_libro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT de la tabla `prestamo`
+--
+ALTER TABLE `prestamo`
+  MODIFY `id_prestamo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `devolucion`
+--
+ALTER TABLE `devolucion`
+  ADD CONSTRAINT `devolucion_ibfk_1` FOREIGN KEY (`id_prestamo`) REFERENCES `prestamo` (`id_prestamo`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `prestamo`
+--
+ALTER TABLE `prestamo`
+  ADD CONSTRAINT `prestamo_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `prestamo_ibfk_2` FOREIGN KEY (`id_libro`) REFERENCES `libro` (`id_libro`) ON DELETE CASCADE ON UPDATE CASCADE;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+CONEXION CON LA BASE DE DATOS
+<?php
+$servername= "localhost";
+$username= "root";
+$password= "";
+$dbname= "biblioteca_prestadora";
+
+$conn= new mysqli($servername, $username, $password, $dbname);
+
+//verificar si existe la base de datos
+if($conn->connect_error){
+    die("Conexion fallida: ". $conn->connect_error);
+}
+
+?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?php include 'db.php' ?>
+<?php
+
+    if($_SERVER["REQUEST_METHOD"]=="POST"){
+        $autor = $_POST['autor'];
+        $titulo = $_POST['titulo'];
+        $ISBN = $_POST['ISBN'];
+        $numero_edicion = $_POST['numero_edicion'];
+        $costodiario_mora = $_POST['costodiario_mora'];
+
+        $sql = "INSERT INTO libro (autor, titulo, ISBN, numero_edicion, costodiario_mora) VALUES
+        ('$autor', '$titulo', '$ISBN', '$numero_edicion', '$costodiario_mora')";
+
+        if($conn->query($sql) === TRUE){
+            echo "Nuevo libro registrado con éxito";
+        }else{
+            echo "Error: ".$conn->error;
+        }
+
+        $conn->close();
+    }
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Libro</title>
+</head>
+<body>
+    <h1>Registrar Libro</h1>
+    <form action='agregar_libro.php' method='POST'>
+        <label>Autor: </label>
+        <input type="text" id="autor" name="autor" required>
+        <br><br>
+        <label>Titulo: </label>
+        <input type="text" id="titulo" name="titulo" required>
+        <br><br>
+        <label>ISBN: </label>
+        <input type="text" id="ISBN" name="ISBN" required>
+        <br><br>
+        <label>Número de Edición: </label>
+        <input type="number" id="numero_edicion" name="numero_edicion" required>
+        <br><br>
+        <label>Costo Diario por Mora: </label>
+        <input type="number" id="costodiario_mora" name="costodiario_mora" required>
+        <br><br>
+        <input type="submit" value="Registrar">
+    </form>
+    <br>
+    <a href= 'lista_biblioteca.php'>Ir a la Lista General</a>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?php include 'db.php'?>
+<?php
+    if ($_SERVER["REQUEST_METHOD"]=="POST"){
+        $nombre = $_POST['nombre'];
+        $telefono = $_POST['telefono'];
+
+        $sql = "INSERT INTO cliente (nombre, telefono) VALUES
+        ('$nombre', '$telefono')";
+
+        if($conn->query($sql) === TRUE){
+            echo "Nuevo cliente registrado con éxito";
+        }else{
+            echo "Error: ".$conn->error;
+        }
+
+        $conn->close();
+    }
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Cliente</title>
+</head>
+<body>
+    <h1>Registrar Cliente</h1>
+    <form action= 'agregar_cliente.php' method='POST'>
+        <label>Nombre: </label>
+        <input type="text" id="nombre" name="nombre" required>
+        <br><br>
+        <label>Teléfono: </label>
+        <input type="text" id="telefono" name="telefono" required>
+        <br><br>
+        <input type="submit" value="Registrar">
+    </form>
+    <br>
+    <a href='lista_biblioteca.php'>Ir a la Lista General</a>
+</body>
+</html>
+
+<?php include 'db.php'?>
+
+<?php 
+    if ($_SERVER["REQUEST_METHOD"]=="POST"){
+        $id_libro = $_POST['id_libro'];
+        $id_cliente = $_POST['id_cliente'];
+        $fecha_prestamo = $_POST['fecha_prestamo'];
+        $fecha_devolucion = $_POST['fecha_devolucion'];
+
+        //Logica para saber si el cliente tiene un prestamo vencido
+        $sql_vencido = "SELECT COUNT(*) AS vencidos FROM prestamo
+        WHERE id_cliente = '$id_cliente'
+        AND devuelto = FALSE
+        AND fecha_devolucion < CURDATE()";
+        $result_vencido = $conn->query($sql_vencido);
+        $row_vencido = $result_vencido->fetch_assoc();
+
+        if ($row_vencido['vencidos'] > 0) {
+            echo "El cliente tiene préstamos vencidos y no puede tomar otro préstamo.";
+        }else{
+        $sql_libro = "SELECT disponible FROM libro WHERE id_libro = '$id_libro'";
+        $result_libro = $conn->query($sql_libro);
+        $row_libro = $result_libro->fetch_assoc();
+        
+		//Logica para saber si el libro esta disponible
+            if(!$row_libro['disponible'] == 1){
+                echo "El libro no está disponible";
+            }else{
+            $sql = "INSERT INTO prestamo (id_libro, id_cliente, fecha_prestamo, fecha_devolucion)
+            VALUES ('$id_libro', '$id_cliente', '$fecha_prestamo', '$fecha_devolucion')";
+
+                if($conn->query($sql) === TRUE){
+                    $sql_update_libro = "UPDATE libro SET disponible = FALSE WHERE id_libro = '$id_libro'";
+                    $conn->query($sql_update_libro);
+
+                    echo "Prestamo realizado con éxito";
+                }else{
+                    echo "Error: ".$conn->error;
+                }
+            }
+        }
+
+        $conn->close();
+    }
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Préstamo</title>
+</head>
+<body>
+    <h1>Registrar Préstamo</h1>
+    <form action= 'registrar_prestamo.php' method='POST'>
+        <label>ID del Libro a Prestar: </label>
+        <input type="number" id="id_libro" name="id_libro" required>
+        <br><br>
+        <label>ID del Cliente: </label>
+        <input type="number" id="id_cliente" name="id_cliente" required>
+        <br><br>
+        <label>Fecha de Préstamo: </label>
+        <input type="date" id="fecha_prestamo" name="fecha_prestamo" required>
+        <br><br>
+        <label>Fecha en la que se devolverá el libro: </label>
+        <input type="date" id="fecha_devolucion" name="fecha_devolucion" required>
+        <br><br>
+        <input type="submit" value="Registrar">
+    </form>
+    <br>
+    <a href='lista_biblioteca.php'>Ir a la Lista General</a>
+</body>
+</html>
+
+
+
+
+<?php include 'db.php'; ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Devolución</title>
+</head>
+<body>
+    <h1>Registro de Devoluciones</h1>
+
+    <?php
+    // Inicializamos las variables
+    $id_prestamo = $fecha_devolucion_real = $monto_mora_total = "";
+
+    // Si ya se envió el formulario para calcular mora
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['calcular_mora'])) {
+        $id_prestamo = $_POST['id_prestamo'];
+        $fecha_devolucion_real = $_POST['fecha_devolucion_real'];
+
+        // Obtener detalles del préstamo
+        $sql_prestamo = "SELECT id_libro, fecha_devolucion FROM prestamo WHERE id_prestamo = '$id_prestamo'";
+        $result_prestamo = $conn->query($sql_prestamo);
+
+        if ($row_prestamo = $result_prestamo->fetch_assoc()) {
+            $id_libro = $row_prestamo['id_libro'];
+            $fecha_devolucion = $row_prestamo['fecha_devolucion'];
+
+            // Inicializamos la mora en 0
+            $monto_mora_total = 0;
+
+            // Verificamos si el préstamo se venció
+            if (strtotime($fecha_devolucion_real) > strtotime($fecha_devolucion)) {
+                $diferencia_dias = (strtotime($fecha_devolucion_real) - strtotime($fecha_devolucion)) / (60 * 60 * 24);
+
+                // Obtener el costo diario de mora del libro
+                $sql_libro = "SELECT costodiario_mora FROM libro WHERE id_libro = '$id_libro'";
+                $result_libro = $conn->query($sql_libro);
+
+                if ($result_libro && $row_libro = $result_libro->fetch_assoc()) {
+                    $costodiario_mora = $row_libro['costodiario_mora'];
+
+                    // Calcular el monto total de la mora
+                    $monto_mora_total = $diferencia_dias * $costodiario_mora;
+                }
+            }
+        } else {
+            echo "Préstamo no encontrado.";
+        }
+    }
+
+    // Si el usuario ya ha decidido eliminar el préstamo
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['eliminar_prestamo'])) {
+        $id_prestamo = $_POST['id_prestamo'];
+        $monto_a_pagar = $_POST['monto_a_pagar'] ?? 0;
+
+        // Registrar la devolución en la tabla devolucion
+        $sql = "INSERT INTO devolucion (id_prestamo, fecha_devolucion_real, monto_mora_total) VALUES
+        ('$id_prestamo', '$fecha_devolucion_real', '$monto_mora_total')";
+
+        if ($conn->query($sql) === TRUE) {
+            echo "Libro devuelto con éxito.";
+
+            // Actualizar el estado del libro a disponible (1)
+            $sql_actualizar_libro = "UPDATE libro SET disponible = 1 WHERE id_libro = (SELECT id_libro FROM prestamo WHERE id_prestamo = '$id_prestamo')";
+            $conn->query($sql_actualizar_libro);
+
+            // Eliminar el préstamo de la tabla prestamo
+            $sql_eliminar_prestamo = "DELETE FROM prestamo WHERE id_prestamo = '$id_prestamo'";
+            if ($conn->query($sql_eliminar_prestamo) === TRUE) {
+            } else {
+                echo " Error al eliminar el préstamo: " . $conn->error;
+            }
+
+        } else {
+            echo "Error al registrar la devolución: " . $conn->error;
+        }
+
+        $conn->close();
+    }
+    ?>
+
+    <!-- Primer Formulario: Calcular Mora -->
+    <h2>Calcular Mora</h2>
+    <form action="" method="POST">
+        <label>ID del Préstamo: </label>
+        <input type="number" id="id_prestamo" name="id_prestamo" value="<?php echo $id_prestamo; ?>" required>
+        <br><br>
+
+        <label>Fecha en la que es devuelto el libro: </label>
+        <input type="date" id="fecha_devolucion_real" name="fecha_devolucion_real" value="<?php echo $fecha_devolucion_real; ?>" required>
+        <br><br>
+
+        <input type="submit" name="calcular_mora" value="Calcular Mora">
+    </form>
+
+    <?php if (isset($monto_mora_total)) { ?>
+        <!-- Segundo Formulario: Registrar Devolución -->
+        <h2>Registrar Devolución</h2>
+        <form action="" method="POST">
+            <label>Monto Total a Pagar por Mora: </label>
+            <input type="number" id="monto_mora_total" name="monto_mora_total" value="<?php echo $monto_mora_total; ?>" readonly>
+            <br><br>
+
+            <input type="hidden" name="id_prestamo" value="<?php echo $id_prestamo; ?>">
+            <input type="hidden" name="fecha_devolucion_real" value="<?php echo $fecha_devolucion_real; ?>">
+            <input type="submit" name="eliminar_prestamo" value="Registrar Devolución">
+        </form>
+    <?php } ?>
+
+    <br>
+    <a href='lista_biblioteca.php'>Ir a la Lista General</a>
+</body>
+</html>
+
+<?php include 'db.php';?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca</title>
+</head>
+<body>
+    <h1>Lista de Clientes, Libros y Préstamos</h1>
+    <br>
+    <a>Para Registrar una devolución haga </a><a href='hacer_devolucion.php'>Clik Aquí</a>
+    <h2>Lista de Clientes</h2>
+    <table border= "1">
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+        </tr>
+        <?php $sql = "SELECT * FROM cliente";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows>0){
+            while ($row=$result->fetch_assoc()){
+                echo    "<tr>
+                            <td>{$row['id_cliente']}</td>
+                            <td>{$row['nombre']}</td>
+                            <td>{$row['telefono']}</td>
+                         </tr>";  
+            }
+
+        } else {
+        echo "<tr><td colspan='5'>No hay clientes</td></tr>";
+        }
+        ?>
+    </table>
+    <br>
+    <a href= 'agregar_cliente.php'>Agrega un nuevo cliente</a>
+    <br><br><br>
+
+    <h2>Lista de Libros</h2>
+    <table border= "1">
+        <tr>
+            <th>ID</th>
+            <th>Titulo</th>
+            <th>Autor</th>
+            <th>ISBN</th>
+            <th>Numero de Edición</th>
+            <th>Costo Diario Por Mora</th>
+        </tr>
+        <?php $sql = "SELECT * FROM libro";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows>0){
+            while ($row=$result->fetch_assoc()){
+                echo    "<tr>
+                            <td>{$row['id_libro']}</td>
+                            <td>{$row['titulo']}</td>
+                            <td>{$row['autor']}</td>
+                            <td>{$row['ISBN']}</td>
+                            <td>{$row['numero_edicion']}</td>
+                            <td>{$row['costodiario_mora']}</td>
+                         </tr>";  
+            }
+
+        } else {
+        echo "<tr><td colspan='5'>No hay libros</td></tr>";
+        }
+        ?>
+    </table>
+    <br>
+    <a href= 'agregar_libro.php'>Agrega un nuevo libro</a>
+    <br><br><br>
+
+    <h2>Lista de Préstamos</h2>
+    <table border= "1">
+        <tr>
+            <th>ID del Préstamo</th>
+            <th>ID del Libro</th>
+            <th>ID del Cliente</th>
+            <th>Fecha del Préstamo</th>
+            <th>Fecha de la devolución</th>
+        </tr>
+        <?php $sql = "SELECT * FROM prestamo";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows>0){
+            while ($row=$result->fetch_assoc()){
+                echo    "<tr>
+                            <td>{$row['id_prestamo']}</td>
+                            <td>{$row['id_libro']}</td>
+                            <td>{$row['id_cliente']}</td>
+                            <td>{$row['fecha_prestamo']}</td>
+                            <td>{$row['fecha_devolucion']}</td>
+                         </tr>";  
+            }
+
+        } else {
+        echo "<tr><td colspan='5'>No hay Préstamos</td></tr>";
+        }    
+        $conn->close();
+        ?>
+    </table>
+    <br>
+    <a href= 'registrar_prestamo.php'>Registra un nuevo préstamo</a>
+</body>
+</html>
